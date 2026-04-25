@@ -21,7 +21,7 @@ function HeroSection() {
 
       {/* 4. Action Buttons */}
       <div className="hero-buttons">
-        <button className="btn-primary">Get Started Free</button>
+        <button className="btn-primary">Get Started Free*</button>
         <button className="btn-secondary">Watch Demo</button>
       </div>
 
