@@ -6,17 +6,17 @@ function HeroSection() {
     <section className="hero-container">
       {/* 1. The small intro badge (if we want it) */}
       <div className="hero-badge">
-        <span>☕</span> Introducing the future of task management
+        <span>☕</span> Coffee Break - Your daily dose of productivity
       </div>
 
       {/* 2. Main Large Headline */}
       <h1 className="hero-title">
-        Build amazing things faster
+        Take a Break, Boost Your Productivity
       </h1>
 
       {/* 3. The description subtitle */}
       <p className="hero-subtitle">
-        Transform your workflow with our intuitive platform. Streamline your processes, organize your day, and achieve more in less time.
+        Drinking coffee is great, but taking breaks is even better. Coffee Break helps you schedule and enjoy your breaks for maximum focus and creativity.
       </p>
 
       {/* 4. Action Buttons */}
