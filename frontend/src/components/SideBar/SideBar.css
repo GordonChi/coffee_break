@@ -1,0 +1,23 @@
+/* Sidebar.css */
+.sidebar {
+  width: 250px; /* Locks in that W3Schools-style left column width */
+  flex-shrink: 0; /* Prevents the main content from squishing the sidebar */
+  min-height: 100vh;
+  background-color: #2b2b2b; /* Dark gray background */
+  display: flex;
+  flex-direction: column; /* Forces the links inside to stack top-to-bottom */
+}
+
+/* Styling the links so they look like clickable navigation tabs */
+.sidebar a {
+  padding: 16px 24px;
+  color: #e5e7eb;
+  text-decoration: none;
+  font-size: 1.1rem;
+  border-bottom: 1px solid #404040; /* Subtle divider lines */
+  transition: background-color 0.2s;
+}
+
+.sidebar a:hover {
+  background-color: #404040; /* Lightens up when you hover over it */
+}

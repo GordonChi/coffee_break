@@ -1,5 +1,5 @@
 import React from 'react';
-import './HeroSection.css'; // Importing its own stylesheet, just like in RateMyCourse!
+import './HeroSection.css'; // Importing its own stylesheet
 
 function HeroSection() {
   return (
