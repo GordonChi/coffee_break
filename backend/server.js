@@ -15,6 +15,9 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log(`Connected to MongoDB sucessfully!`))
     .catch((err) => console.error(`MongoDB connection error: `, err));
 
+// API routes
+app.use('/api/auth', require('./routes/auth')); // Authentication routes (register, login)
+
 // Test route
 app.get(`/`, (req, res) => {
     res.send(`Coffee Break API is running!`);

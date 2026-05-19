@@ -1,78 +1,18 @@
-/* Container: Handles centering and layout */
-.hero-container {
+/* App.css */
+body {
+  margin: 0; /* Removes default browser margins that cause weird scrolling */
+}
+
+.main-app-container {
+  display: flex; 
+  flex-direction: row; /* Forces the side-by-side layout */
+  min-height: 100vh; /* Takes up the full screen height */
+  width: 100%;
+}
+
+.content-area {
+  flex-grow: 1; /* Tells the right side to stretch and fill all remaining space */
   display: flex;
-  flex-direction: column;
-  align-items: center; /* Horizontally centers all content */
-  text-align: center;
-  padding: 100px 20px; /* Top/bottom padding for that spacious 'banner' feel */
-  background-color: #ffffff;
-}
-
-/* Badge (Inspired by image_5.png) */
-.hero-badge {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background-color: #f3f4f6; /* Soft gray */
-  color: #2563eb; /* Strong brand blue */
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin-bottom: 30px;
-}
-
-/* Title (Giant headline) */
-.hero-title {
-  font-size: 4rem; /* HUGE typography from reference */
-  font-weight: 800;
-  color: #111827; /* Near-black */
-  max-width: 900px; /* Prevents text from being too wide */
-  line-height: 1.1;
-  margin-bottom: 24px;
-}
-
-/* Subtitle (Description text) */
-.hero-subtitle {
-  font-size: 1.25rem;
-  color: #4b5563; /* Medium gray */
-  max-width: 650px;
-  line-height: 1.6;
-  margin-bottom: 40px;
-}
-
-/* Button Container */
-.hero-buttons {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-/* Button Styling (Colors from reference design) */
-.btn-primary {
-  background-color: #2563eb; /* Primary brand blue */
-  color: white;
-  padding: 14px 28px;
-  border-radius: 8px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.btn-secondary {
-  background-color: #ffffff;
-  color: #1f2937; /* Dark gray */
-  padding: 14px 28px;
-  border-radius: 8px;
-  font-weight: 600;
-  border: 1px solid #d1d5db; /* Light border */
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-/* Small Proof Text */
-.hero-proof {
-  font-size: 0.85rem;
-  color: #6b7280; /* Gray */
+  justify-content: center; /* Centers the Hero section */
+  background-color: #1a1a1a; /* Fills in the dark background */
 }
