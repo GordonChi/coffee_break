@@ -9,6 +9,7 @@ const router = express.Router();
 
 // POST request: /api/auth/setup-2fa
 router.post('/setup-2fa', async (req, res) => {
+    console.log("TRIPWIRE TRIGGERED: request made it to the backend")
     try {
         // Generate a unique secret for the user
         const secret = speakeasy.generateSecret({
