@@ -10,10 +10,19 @@ import "./NavBar.css"; // Importing its own stylesheet
 
 function NavBar() {
     return (
-        <div className="nav-bar">
-            {/* Navbar content goes here */}
-            <a href="#Home" className="nav-link">Home</a>
-        </div>
+        <nav className="navbar-banner">
+            {/* LEFT SIDE BOUND */}
+            <div className="navbar-brand">
+                <span className="brand-icon">☕</span>
+                <span className="brand-name">Coffee Break</span>
+            </div>
+
+            {/* RIGHT SIDE BOUND */}
+            <div className="navbar-actions">
+                <button className="btn-text">Sign In</button>
+                <button className="btn-primary">Sign Up</button> 
+            </div>
+        </nav>
     );
 }
 

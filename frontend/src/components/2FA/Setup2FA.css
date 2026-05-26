@@ -1,0 +1,109 @@
+/* Container: Handles centering and structural layout */
+.setup-2fa-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    max-width: 500px;
+    margin: 40px auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.setup-2fa-title {
+    font-size: 1.75rem;
+    color: #111827;
+    margin-bottom: 24px;
+    font-weight: 700;
+}
+
+/* Reusing your established primary button styling */
+.btn-primary {
+    background-color: #2563eb; 
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-primary:disabled {
+    background-color: #93c5fd;
+    cursor: not-allowed;
+}
+
+/* QR Code Display Section */
+.qr-code-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.instruction-text {
+    font-size: 1rem;
+    color: #4b5563;
+    margin: 16px 0 8px 0;
+    line-height: 1.5;
+}
+
+.qr-image {
+    border: 8px solid white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 16px 0;
+}
+
+.manual-key {
+    background-color: #f3f4f6;
+    color: #1f2937;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+}
+
+/* Verification Input Group */
+.verify-section {
+    width: 100%;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.verify-input-group {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+.pin-input {
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1.25rem;
+    text-align: center;
+    width: 120px;
+    letter-spacing: 4px;
+    font-family: monospace;
+    color: #111827;
+}
+
+.pin-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
