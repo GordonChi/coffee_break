@@ -1,28 +1,48 @@
 import React from 'react';
-import NavBar from './components/StickyNav/NavBar'; 
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import NavBar from './components/StickyNav/NavBar';
 import HeroSection from './components/HeroSection/HeroSection';
-
-//import Setup2FA from './components/2FA/Setup2FA';  // Taking this out for now to clean up the screen, but we'll add it back in later when we implement the 2FA flow
-import './App.css';
+import Setup2FA from './components/2FA/Setup2FA';
+import AuthPage from './pages/AuthPage';
+import './App.css'; 
 
 function App() {
   return (
-    <div className="app-root">
-      
-      {/* 1. The Full-Width Top Banner */}
-      <NavBar />
-      
-      {/* 2. The Main Content Area (Below the banner) */}
-      <div className="main-content-wrapper">
+    <Router>
+      <div className="app-root">
+        {/* 
+        Navigation Bar 
+        Keep this outside of Routes so it appears on all pages
+        */}
+        <NavBar />
 
-        {/* Center Canvas */}
-        <main className="hero-wrapper">
-          <HeroSection />
-        </main>
-        
+        <div className="main-content-wrapper">
+          <Routes>
+            {/* Home Page */}
+            <Route path="/" element={
+              <main className="hero-wrapper">
+                <HeroSection />
+              </main>
+            } />
+
+            {/* 
+            All routes will be added here. Think of this as the "switchboard" that directs users to different pages based on the URL. 
+            For example, when we create the AuthPage for login/signup, we will add a route like this:
+            <Route path="/login" element={<AuthPage />} />
+            And when we create more pages, we will have to add them here so users can navigate to them
+            */}
+            
+            {/* 2FA Setup Page */}
+            <Route path="/setup-2fa" element={<Setup2FA />} />
+            {/* Authentication Page (Login/Signup) */}
+            <Route path="/login" element={<AuthPage />} />
+            <Route path="/signup" element={<AuthPage />} /> {/* This is not yet implmented, but we will use the same AuthPage for both login and signup for now */}
+
+          </Routes>
+
+        </div>
       </div>
-
-    </div>
+    </Router>
   );
 }
 

@@ -5,25 +5,23 @@
     Source: https://www.w3schools.com/howto/howto_js_navbar_sticky.asp
     
     */}
-import React from "react";
+import { Link } from 'react-router-dom'; // Importing Link for navigation
 import "./NavBar.css"; // Importing its own stylesheet
 
-function NavBar() {
+export default function NavBar() {
     return (
         <nav className="navbar-banner">
-            {/* LEFT SIDE BOUND */}
-            <div className="navbar-brand">
+            {/* Links replaces the onClick */}
+            <Link to="/" className="navbar-brand" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <span className="brand-icon">☕</span>
-                <span className="brand-name">Coffee Break</span>
-            </div>
+                <span className="brand-text">Coffee Break</span>
+            </Link>
 
-            {/* RIGHT SIDE BOUND */}
             <div className="navbar-actions">
-                <button className="btn-text">Sign In</button>
-                <button className="btn-primary">Sign Up</button> 
+                {/* We will point these to the real auth pages later */}
+                <Link to="/login" className="btn-text" style={{ textDecoration: 'none' }}>Sign In</Link>
+                <Link to="/signup" className="btn-primary" style={{ textDecoration: 'none' }}>Sign Up</Link>
             </div>
         </nav>
     );
 }
-
-export default NavBar;

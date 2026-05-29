@@ -1,38 +1,29 @@
 const mongoose = require('mongoose');
 
-const UserSchema = new mongoose.Schema({
-    // Username: An alias for a user, used for display and login purposes. 
-    // It must be unique and is required.
-    username: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true, 
-        minlength: 3
-    },
-    // Email: The user's email address, used for communication and password resets
+const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true,
-        trim: true
+        unique: true, // Prevents two people from signing up with the same email
+        trim: true,
+        lowercase: true
     },
-    // Password: Pretty self explanatory, will be stored as raw string for now 
-    // but will be hashed in the future for security reasons.
     password: {
         type: String,
-        required: true,
-        minlength: 6
+        required: true
     },
-    // 2FA Enabled: A boolean flag indicating whether the user has enabled two-factor authentication for added security.
-    twoFactorEnabled: {
+    isTwoFactorEnabled: {
         type: Boolean,
-        default: false
+        default: false // Everyone starts with 2FA off
     },
-    // 2FA Secret: A string that stores the secret key used for generating two-factor authentication codes, if 2FA is enabled.
     twoFactorSecret: {
-        type: String,
+        type: String, 
+        // We will store the Speakeasy secret here later if they choose to enable it!
+        default: null
     }
-}, { timestamps: true }); // Automatically adds createdAt and updatedAt fields
+}, { 
+    // This automatically tracks when the user signed up (createdAt) 
+    timestamps: true 
+});
 
-module.exports = mongoose.model("User", UserSchema); 
+module.exports = mongoose.model('User', userSchema);
