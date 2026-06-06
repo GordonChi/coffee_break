@@ -18,7 +18,7 @@ export default function NavBar() {
             </Link>
 
             <div className="navbar-actions">
-                {/* We will point these to the real auth pages later */}
+                {/* Links for login and signup */}
                 <Link to="/login" className="btn-text" style={{ textDecoration: 'none' }}>Sign In</Link>
                 <Link to="/signup" className="btn-primary" style={{ textDecoration: 'none' }}>Sign Up</Link>
             </div>

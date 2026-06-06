@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NavBar from './components/StickyNav/NavBar';
 import HeroSection from './components/HeroSection/HeroSection';
 import Setup2FA from './components/2FA/Setup2FA';
-import AuthPage from './pages/AuthPage';
+import LoginPage from './pages/Login/LoginPage';
+import SignupPage from './pages/Signup/SignupPage';
 import './App.css'; 
 
 function App() {
@@ -35,8 +36,8 @@ function App() {
             {/* 2FA Setup Page */}
             <Route path="/setup-2fa" element={<Setup2FA />} />
             {/* Authentication Page (Login/Signup) */}
-            <Route path="/login" element={<AuthPage />} />
-            <Route path="/signup" element={<AuthPage />} /> {/* This is not yet implmented, but we will use the same AuthPage for both login and signup for now */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
 
           </Routes>
 

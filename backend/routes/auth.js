@@ -7,24 +7,32 @@ const User = require('../models/User');
 // const qrcode = require('qrcode');
 
 // ==========================================
-// 1. THE NEW SIGNUP ROUTE
+// SIGNUP ROUTE
 // ==========================================
 router.post('/signup', async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { username, email, password } = req.body;
 
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'A user with this email already exists.' });
+        // Check if the username is already in use
+        const existingUsername = await User.findOne({ username: username.toLowerCase().trim() });
+        if (existingUsername) {
+            return res.status(400).json({ message: 'Username is already taken.' });
+        }
+
+        // Check if the email is already in use
+        const existingEmail = await User.findOne({ email: email.toLowerCase().trim() });
+        if (existingEmail) {
+            return res.status(400).json({ message: 'Email is already registered.' });
         }
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const newUser = new User({
+            username: username.trim(),
             email,
             password: hashedPassword,
-            isTwoFactorEnabled: false 
+            isTwoFactorEnabled: false, // 
         });
 
         await newUser.save();
@@ -40,16 +48,9 @@ router.post('/signup', async (req, res) => {
     }
 });
 
-// ==========================================
-// 2. YOUR EXISTING 2FA SETUP ROUTE
-// ==========================================
-router.post('/setup-2fa', async (req, res) => {
-    // Keep all the code you wrote here for generating the QR code!
-    // ...
-});
 
 // ==========================================
-// 3. LOGIN ROUTE
+// LOGIN ROUTE
 // ==========================================
 router.post('/login', async (req, res) => {
     try {

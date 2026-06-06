@@ -1,6 +1,13 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
+    username: {
+        type: String,
+        required: true,
+        trim: true,
+        minlength: 3,
+        unique: true // Prevents two people from signing up with the same username
+    },
     email: {
         type: String,
         required: true,
