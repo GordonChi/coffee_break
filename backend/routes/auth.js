@@ -7,6 +7,34 @@ const User = require('../models/User');
 // const qrcode = require('qrcode');
 
 // ==========================================
+// CHECK USERNAME ROUTE (Part of SignupPage.jsx username availability check)
+// ==========================================
+router.post('/check-username', async (req, res) => {
+    try {
+        // Need to have a username in the request body to check
+        const { username } = req.body;
+
+        // If the username is empty or too short, we can immediately return that it's not available
+        if (!username || username.trim() < 3) {
+            return res.status(400).json({ available: false, message: 'Must be at least 3 characters.' });
+        }
+
+        const userExists = await User.findOne({ username: username.toLowerCase().trim() });
+
+        // If the user exists, return false again because its unavailable
+        if (userExists) {
+            return res.status(200).json({ available: false, message: 'Username is already taken.' });
+        }
+
+        // If username is valid and not taken, return true
+        res.status(200).json({ available: true, message: 'Username is available!' });
+    } catch (error) {
+        // In case of any server error, we can return error message
+        res.status(500).json({ message: 'Server error while checking username.' });
+    }
+});
+
+// ==========================================
 // SIGNUP ROUTE
 // ==========================================
 router.post('/signup', async (req, res) => {
@@ -79,6 +107,36 @@ router.post('/login', async (req, res) => {
     } catch (error) {
         console.error("Login Error:", error);
         res.status(500).json({ message: 'Server error during login.' });
+    }
+});
+
+// ==========================================
+// 2FA SETUP ROUTE (Part of Setup2FAPage.jsx)
+// ==========================================
+router.post('/setup-2fa', async (req, res) => {
+    try {
+        // Generate a unique secret for this user
+        const secret = speakeasy.generateSecret({ 
+            name: "Coffee Break"
+        });
+
+        // Convert the secret into a scannable QR code URL
+        qrcode.toDataURL(secret.otpauth_user, (err, data_url) => {
+            if (err) {
+                console.error("QR Code Generation Error:", err);
+                return res.status(500).json({ message: 'Error generating QR code.' });
+            }
+
+            // Send the secret and QR code URL back to the frontend
+            res.status(200).json({
+                secret: secret.base32, // This is the secret key that will be stored in the database
+                qrCodeUrl: data_url // This is the QR code that the user will scan with their authenticator app
+            });
+        });
+    } catch (error) {
+        // Log error if database fails
+        console.error("2FA Setup Error:", error);
+        res.status(500).json({ message: 'Server error during 2FA setup.' });
     }
 });
 

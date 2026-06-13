@@ -22,7 +22,7 @@ export default function SignupPage() {
             setUsernameStatus({ checked: true, available: false, message: 'Must be at least 3 characters.' });
             return;
         }
-
+        
         setIsCheckingUsername(true);
         try {
             const response = await fetch('http://localhost:5000/api/auth/check-username', {
@@ -54,19 +54,25 @@ export default function SignupPage() {
         }
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/signup', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, email, password })
-            });
-            const data = await response.json();
+        const response = await fetch('http://localhost:5000/api/auth/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password })
+        });
+        const data = await response.json();
 
-            if (!response.ok) throw new Error(data.message || 'Signup failed');
+        if (!response.ok) throw new Error(data.message || 'Signup failed');
 
-            setShow2FAPrompt(true);
-        } catch (err) {
-            setError(err.message);
+        // If they want 2FA, show the prompt. Otherwise, navigate to homepage immediately.
+        if (wants2FA) {
+            navigate('/setup-2fa');
+        } else {
+            navigate('/'); // Redirect to homepage or dashboard after successful signup
         }
+        
+    } catch (err) {
+        setError(err.message);
+    }
     };
 
     if (show2FAPrompt) {
