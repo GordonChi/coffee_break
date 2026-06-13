@@ -1,15 +1,44 @@
-.nav-bar {
+/* The Main Banner Container */
+.navbar-banner {
+    display: flex;
+    justify-content: space-between; /* Pushes left and right sections apart */
+    align-items: center; /* Vertically centers everything */
+    width: 100%;
+    padding: 16px 40px; /* Top/Bottom padding, Left/Right padding */
+    background-color: #111827; /* Dark background to match your app's outer shell */
+    color: #ffffff;
+    box-sizing: border-box; /* Ensures padding doesn't break the 100% width */
     position: sticky;
     top: 0;
-    overflow: hidden;
-    background-color: #333;
+    z-index: 100;
+    border-bottom: 1px solid #1f2937;
 }
 
-.nav-link {
-    float: left;
-    display: block;
-    color: #f2f2f2;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.btn-text {
+    background: none;
+    border: none;
+    color: #d1d5db; /* Light gray */
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.btn-text:hover {
+    color: #ffffff; /* Brightens on hover */
 }

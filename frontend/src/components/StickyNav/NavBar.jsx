@@ -5,16 +5,23 @@
     Source: https://www.w3schools.com/howto/howto_js_navbar_sticky.asp
     
     */}
-import React from "react";
+import { Link } from 'react-router-dom'; // Importing Link for navigation
 import "./NavBar.css"; // Importing its own stylesheet
 
-function NavBar() {
+export default function NavBar() {
     return (
-        <div className="nav-bar">
-            {/* Navbar content goes here */}
-            <a href="#Home" className="nav-link">Home</a>
-        </div>
+        <nav className="navbar-banner">
+            {/* Links replaces the onClick */}
+            <Link to="/" className="navbar-brand" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <span className="brand-icon">☕</span>
+                <span className="brand-text">Coffee Break</span>
+            </Link>
+
+            <div className="navbar-actions">
+                {/* Links for login and signup */}
+                <Link to="/login" className="btn-text" style={{ textDecoration: 'none' }}>Sign In</Link>
+                <Link to="/signup" className="btn-primary" style={{ textDecoration: 'none' }}>Sign Up</Link>
+            </div>
+        </nav>
     );
 }
-
-export default NavBar;

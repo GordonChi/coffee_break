@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/GordonChi/coffee_break#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^4.22.2",
