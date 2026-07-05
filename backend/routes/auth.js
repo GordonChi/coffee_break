@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken'); // Added for JWT token generation
 const User = require('../models/User'); 
 // Make sure your 2FA imports are still here!
 // const speakeasy = require('speakeasy');
@@ -96,10 +97,19 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Invalid email or password.' });
         }
 
-        // If they match, confirmed login
+        // 3. Generate JWT keycard
+        const token = jwt.sign(
+            { userId: user._id },       // Payload: user ID
+            process.env.JSW_SECRET,     // Secret key from .env
+            { expiresIn: '2h' }         // Token expiration time
+        );
+
+        // If they match, confirmed login. Send token back to user
         res.status(200).json({
             message: 'Login successful!',
+            token: token,
             userId: user._id,
+            username: user.username, // send back the username as well for frontend use
             // Let the frontend know if it needs to ask for 2FA code
             isTwoFactorEnabled: user.isTwoFactorEnabled
         });

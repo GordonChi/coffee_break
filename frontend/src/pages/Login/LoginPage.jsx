@@ -24,7 +24,13 @@ export default function LoginPage() {
 
             if (!response.ok) throw new Error(data.message || 'Login failed');
 
-            navigate('/');
+            // Store the JWT token in localStorage
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('userId', data.userId);
+            localStorage.setItem('username', data.username); // Store the username for later use
+
+            window.location.href = '/';  // Redirect to home page or dashboard after successful login for now, should change this to user dashboard once we have that page
+
         } catch (err) {
             setError(err.message);
         }
