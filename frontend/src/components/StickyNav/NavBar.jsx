@@ -5,22 +5,56 @@
     Source: https://www.w3schools.com/howto/howto_js_navbar_sticky.asp
     
     */}
-import { Link } from 'react-router-dom'; // Importing Link for navigation
-import "./NavBar.css"; // Importing its own stylesheet
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './NavBar.css';
 
 export default function NavBar() {
+    // Check if the user is logged in
+    const token = localStorage.getItem('token');
+    const username = localStorage.getItem('username');
+
+    const handleLogout = () => {
+        // Clear the pockets!
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('username');
+        
+        // Refresh the page to reset the UI
+        window.location.href = '/login';
+    };
+
     return (
         <nav className="navbar-banner">
-            {/* Links replaces the onClick */}
             <Link to="/" className="navbar-brand" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <span className="brand-icon">☕</span>
                 <span className="brand-text">Coffee Break</span>
             </Link>
 
             <div className="navbar-actions">
-                {/* Links for login and signup */}
-                <Link to="/login" className="btn-text" style={{ textDecoration: 'none' }}>Sign In</Link>
-                <Link to="/signup" className="btn-primary" style={{ textDecoration: 'none' }}>Sign Up</Link>
+                {token ? (
+                    /* IF LOGGED IN: Show User Menu */
+                    <div className="user-menu">
+                        <span className="welcome-text">Welcome, {username}</span>
+                        
+                        <div className="dropdown">
+                            <button className="dropdown-button">Account ▾</button>
+                            <div className="dropdown-content">
+                                <Link to="/profile">Profile</Link>
+                                <Link to="/settings">Settings</Link>
+                                <Link to="/privacy">Privacy</Link>
+                                <hr className="dropdown-divider" />
+                                <button onClick={handleLogout} className="logout-btn">Log Out</button>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    /* IF LOGGED OUT: Show Standard Buttons */
+                    <>
+                        <Link to="/login" className="btn-text" style={{ textDecoration: 'none' }}>Sign In</Link>
+                        <Link to="/signup" className="btn-primary" style={{ textDecoration: 'none' }}>Sign Up</Link>
+                    </>
+                )}
             </div>
         </nav>
     );
