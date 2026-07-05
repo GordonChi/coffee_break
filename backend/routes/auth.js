@@ -124,6 +124,7 @@ router.post('/login', async (req, res) => {
 // 2FA SETUP ROUTE (Part of Setup2FAPage.jsx)
 // ==========================================
 router.post('/setup-2fa', async (req, res) => {
+    console.log("TRIPWIRE TRIGGERED: request made it to the backend")
     try {
         // Generate a unique secret for this user
         const secret = speakeasy.generateSecret({ 
