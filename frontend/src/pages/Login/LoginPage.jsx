@@ -29,7 +29,7 @@ export default function LoginPage() {
             localStorage.setItem('userId', data.userId);
             localStorage.setItem('username', data.username); // Store the username for later use
 
-            window.location.href = '/';  // Redirect to home page or dashboard after successful login for now, should change this to user dashboard once we have that page
+            window.location.href = '/dashboard';  // Redirect to home page or dashboard after successful login for now, should change this to user dashboard once we have that page
 
         } catch (err) {
             setError(err.message);

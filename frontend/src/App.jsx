@@ -1,10 +1,11 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import NavBar from './components/StickyNav/NavBar';
 import HeroSection from './components/HeroSection/HeroSection';
 import Setup2FA from './components/2FA/Setup2FA';
 import LoginPage from './pages/Login/LoginPage';
 import SignupPage from './pages/Signup/SignupPage';
+import DashboardPage from './pages/Dashboard/DashboardPage';
 import './App.css'; 
 
 function App() {
@@ -19,7 +20,7 @@ function App() {
 
         <div className="main-content-wrapper">
           <Routes>
-            {/* Home Page */}
+            {/* Home Page (when logged out, should land here) */}
             <Route path="/" element={
               <main className="hero-wrapper">
                 <HeroSection />
@@ -33,11 +34,16 @@ function App() {
             And when we create more pages, we will have to add them here so users can navigate to them
             */}
             
+            {/* If the user is already logged in, redirect them to the dashboard */}
+            <Route path="/home" element={<Navigate to="/dashboard" replace />} />
+
             {/* 2FA Setup Page */}
             <Route path="/setup-2fa" element={<Setup2FA />} />
             {/* Authentication Page (Login/Signup) */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+
+            <Route path="/dashboard" element={<DashboardPage />} />
 
           </Routes>
 
