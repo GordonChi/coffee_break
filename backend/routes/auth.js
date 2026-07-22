@@ -84,7 +84,7 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-
+        console.log('boop')
         // 1. Does this user exist in the database?
         const user = await User.findOne({ email });
         if (!user) {
@@ -100,7 +100,7 @@ router.post('/login', async (req, res) => {
         // 3. Generate JWT keycard
         const token = jwt.sign(
             { userId: user._id },       // Payload: user ID
-            process.env.JSW_SECRET,     // Secret key from .env
+            process.env.JWT_SECRET,     // Secret key from .env
             { expiresIn: '2h' }         // Token expiration time
         );
 
