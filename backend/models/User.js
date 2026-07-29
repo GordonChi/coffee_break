@@ -27,7 +27,9 @@ const userSchema = new mongoose.Schema({
         type: String, 
         // We will store the Speakeasy secret here later if they choose to enable it!
         default: null
-    }
+    },  
+    following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 }, { 
     // This automatically tracks when the user signed up (createdAt) 
     timestamps: true 

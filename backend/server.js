@@ -26,6 +26,9 @@ mongoose.connect(process.env.MONGO_URI, {
 // API routes
 app.use('/api/auth', require('./routes/auth')); // Authentication routes (register, login)
 
+// Timeline fetching api route
+app.use('/api/posts', require('./routes/posts'));
+
 // Test route
 app.post('/api/test', (req, res) => {
     console.log("SUCCESS: POST request made it through the middleware!");
@@ -43,6 +46,6 @@ const PORT = process.env.PORT || 5000;
 // and linux, Node dual-stacks automatically
 const HOST = process.env.HOST;
 
-app.listen(PORT, '0.0.0.0', () => { 
+app.listen(PORT, HOST, () => { 
     console.log(`Server is listening on port ${PORT}`);
 });
