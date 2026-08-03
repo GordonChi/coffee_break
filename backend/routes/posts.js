@@ -5,11 +5,13 @@ const User = require('../models/User');
 
 // Making a new post (user)
 router.post('/', async (req, res) => {
+    console.log("Backend received this body:", req.body);
+
     try{
         const newPost = new Post({
             // For now, just pull the user from frontend
             // Evenutally pull it from jwt
-            user: req.body.userID,
+            user: req.body.userId,
             content: req.body.content
         });
 
