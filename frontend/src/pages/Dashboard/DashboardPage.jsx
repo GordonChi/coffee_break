@@ -1,12 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './DashboardPage.css';
 
 export default function DashboardPage() {
     // Grab the user from the login token
     const username = localStorage.getItem('username') || 'Traveler';
+    const userId = localStorage.getItem('userId'); // Fixed: getItem
 
     // States for the new post input
     const [postContent, setPostContent] = useState('');
+    // States for fetched timeline
+    const [posts, setPosts] = useState([]); // Fixed: renamed to 'posts'
+
+    // Load the timeline when the dashboard first loads
+    // using useEffect
+    useEffect(() => { // Fixed: Removed the extra '('
+        const fetchTimeLine = async () => {
+            try {
+                // use the userId for a query parameter
+                const response = await fetch(`http://127.0.0.1:5000/api/posts/timeline?userId=${userId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setPosts(data.posts);
+                }
+            } catch (error) {
+                console.error("Error fetching timeline:", error);
+            }
+        }
+        if (userId) {
+            fetchTimeLine();
+        }
+    }, [userId]);
 
     // Handle submitting posts to the backend
     const handleCreatePost = async (e) => {
@@ -33,6 +56,11 @@ export default function DashboardPage() {
             if (response.ok) {
                 const newPost = await response.json();
                 console.log("Post successfully created:", newPost);
+
+                newPost.user = { username: username };
+
+                setPosts([newPost, ...posts]);
+
                 setPostContent(''); 
             } else {
                 // If an error occurs while sending
@@ -71,17 +99,19 @@ export default function DashboardPage() {
 
                 {/* Scrollable area */}
                 <div className="feed-content posts-scroll-area">
-                    {/* We will build the post submission form here next! */}
-                    <div className="placeholder-post">
-                        <p><strong>{username}</strong></p>
-                        <p>Just setting up my new workspace. Testing the layout!</p>
-                        <small>Just now</small>
-                    </div>
-                    <div className="placeholder-post">
-                        <p><strong>System</strong></p>
-                        <p>Welcome to your personal dashboard.</p>
-                        <small>1 hour ago</small>
-                    </div>
+                    {posts.length === 0 ? (
+                        <div className="placeholder-post">
+                            <p>No posts yet. Start the conversation!</p>
+                        </div>
+                    ) : (
+                        posts.map((post) => (
+                            <div key={post._id} className="placeholder-post">
+                                <p><strong>{post.user?.username || 'Unknown User'}</strong></p>
+                                <p>{post.content}</p>
+                                <small>{new Date(post.createdAt).toLocaleString()}</small>
+                            </div>
+                        ))
+                    )}
                 </div>
 
                 { /* input box area */ }

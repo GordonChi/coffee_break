@@ -33,7 +33,7 @@ router.get('/timeline', async (req, res) => {
 
 
         // Grab current user and see who they are following 
-        const currentUserId = req.query.userID || req.body.userID;
+        const currentUserId = req.query.userId || req.body.userId;
         const currentUser = await User.findById(currentUserId);
 
 
