@@ -42,7 +42,8 @@ export default function DashboardPage() {
             const userId = localStorage.getItem('userId');
             
             // Checking what I am sending because I keep getting an error
-            console.log("Frontend is sending this payload:", { userId: userId, content: postContent });
+            // (old code now)
+            //console.log("Frontend is sending this payload:", { userId: userId, content: postContent });
 
             const response = await fetch('http://127.0.0.1:5000/api/posts', {
                 method: 'POST',
@@ -59,7 +60,7 @@ export default function DashboardPage() {
 
                 newPost.user = { username: username };
 
-                setPosts([newPost, ...posts]);
+                setPosts([...posts, NewPost]);
 
                 setPostContent(''); 
             } else {

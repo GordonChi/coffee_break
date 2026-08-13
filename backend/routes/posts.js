@@ -48,7 +48,7 @@ router.get('/timeline', async (req, res) => {
 
         // Fetch a timeline
         const posts = await Post.find({ user: { $in: networkIds } })
-        .sort({ createdAt: -1 })    // Sort by the time posts are created
+        .sort({ createdAt: 1 })     // Sort by the time posts are created (ascending order)
         .limit(limit)               // limit how many posts are on the screen at once
         .skip(skipIndex)
         .populate('user', 'username');
