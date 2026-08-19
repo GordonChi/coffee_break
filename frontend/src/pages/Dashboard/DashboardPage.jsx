@@ -16,7 +16,7 @@ export default function DashboardPage() {
     useEffect(() => { // Fixed: Removed the extra '('
         const fetchTimeLine = async () => {
             try {
-                // use the userId for a query parameter
+                // use the userId for a query parameter to 'filter' only userIds timeline
                 const response = await fetch(`http://127.0.0.1:5000/api/posts/timeline?userId=${userId}`);
                 if (response.ok) {
                     const data = await response.json();
@@ -60,7 +60,7 @@ export default function DashboardPage() {
 
                 newPost.user = { username: username };
 
-                setPosts([...posts, NewPost]);
+                setPosts([...posts, newPost]);
 
                 setPostContent(''); 
             } else {

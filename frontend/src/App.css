@@ -1,18 +1,44 @@
-/* App.css */
+/* --- 1. THEME VARIABLES --- */
+:root {
+  --bg-color: #f9fafb; /* Light mode background */
+  --surface-color: #ffffff;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --border-color: #e5e7eb;
+  --accent-color: #4f46e5;
+}
+
+.dark-theme {
+  --bg-color: #1a1a1a;
+  --surface-color: #2d2d2d;
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --border-color: #404040;
+  --accent-color: #818cf8;
+}
+
+
+/* --- 2. GLOBAL STYLES --- */
 body {
-  margin: 0; /* Removes default browser margins that cause weird scrolling */
+  margin: 0; 
+  /* Apply the variables globally to the body */
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  /* This adds a smooth fade when the user clicks the toggle button */
+  transition: background-color 0.3s ease, color 0.3s ease; 
 }
 
 .main-app-container {
   display: flex; 
-  flex-direction: row; /* Forces the side-by-side layout */
-  min-height: 100vh; /* Takes up the full screen height */
+  flex-direction: row; 
+  min-height: 100vh; 
   width: 100%;
 }
 
 .content-area {
-  flex-grow: 1; /* Tells the right side to stretch and fill all remaining space */
+  flex-grow: 1; 
   display: flex;
-  justify-content: center; /* Centers the Hero section */
-  background-color: #1a1a1a; /* Fills in the dark background */
+  justify-content: center; 
+  /* CHANGED: Replaced #1a1a1a with the variable */
+  background-color: var(--bg-color); 
 }

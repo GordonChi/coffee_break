@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import NavBar from './components/StickyNav/NavBar';
 import HeroSection from './components/HeroSection/HeroSection';
@@ -6,9 +6,20 @@ import Setup2FA from './components/2FA/Setup2FA';
 import LoginPage from './pages/Login/LoginPage';
 import SignupPage from './pages/Signup/SignupPage';
 import DashboardPage from './pages/Dashboard/DashboardPage';
+import UserSettings from './pages/UserSettings/UserSettings';
 import './App.css'; 
 
 function App() {
+  // Check if the user has global settings to apply
+  useEffect(() => {
+    // Check localstorage for settings
+    const savedTheme = localStorage.getItem("appTheme");
+
+    if (savedTheme === 'dark') {
+      document.body.classList.add('dark-theme');
+    }
+  }, []);
+  
   return (
     <Router>
       <div className="app-root">
@@ -37,7 +48,8 @@ function App() {
             {/* If the user is already logged in, redirect them to the dashboard */}
             <Route path="/home" element={<Navigate to="/dashboard" replace />} />
 
-            {/* 2FA Setup Page */}
+            {/* Settings and related pages */}
+            <Route path="/settings" element={<UserSettings />} />
             <Route path="/setup-2fa" element={<Setup2FA />} />
             {/* Authentication Page (Login/Signup) */}
             <Route path="/login" element={<LoginPage />} />
