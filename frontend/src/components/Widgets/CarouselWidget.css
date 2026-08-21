@@ -1,0 +1,49 @@
+/* Container sizing */
+.carousel-widget-container {
+    width: 300px;
+}
+
+/* Form layout */
+.carousel-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Standard widget button */
+.carousel-upload-btn {
+    padding: 8px;
+    cursor: pointer;
+    background-color: var(--surface-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.carousel-upload-btn:hover:not(:disabled) {
+    background-color: var(--bg-color);
+}
+
+.carousel-upload-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Image preview section */
+.carousel-preview-container {
+    margin-top: 15px;
+}
+
+.carousel-success-text {
+    font-size: 0.8rem;
+    color: #10b981; /* A nice, modern success green */
+    margin-bottom: 8px;
+    margin-top: 0;
+}
+
+.carousel-preview-image {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}

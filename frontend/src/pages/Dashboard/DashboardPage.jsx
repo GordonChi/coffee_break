@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './DashboardPage.css';
+import CarouselWidget from '../../components/Widgets/CarouselWidget';
 
 export default function DashboardPage() {
     // Grab the user from the login token
@@ -137,20 +138,10 @@ export default function DashboardPage() {
                     <button className="add-widget-btn">+ Add Widget</button>
                 </div>
                 
-                {/* Temporary hardcoded widgets to test the look */}
-                <div className="mock-widget weather-widget">
-                    <h4>🌤️ Edmonton</h4>
-                    <p>22°C</p>
-                    <small>Partly Cloudy</small>
-                </div>
 
-                <div className="mock-widget sticky-widget">
-                    <h4>📌 To-Do</h4>
-                    <ul>
-                        <li>Build Post API</li>
-                        <li>Add Drag & Drop</li>
-                        <li>Connect Spotify</li>
-                    </ul>
+                {/* --- CAROUSEL PIPELINE --- */}
+                <div style={{ position: 'absolute', top: '150px', left: '50px' }}>
+                    <CarouselWidget />
                 </div>
             </section>
 

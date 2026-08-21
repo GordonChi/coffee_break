@@ -2,6 +2,7 @@ require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const widgetRoutes = require('./routes/widgets.js');
 
 // Initialize Express app
 const app = express();
@@ -25,6 +26,7 @@ mongoose.connect(process.env.MONGO_URI, {
 
 // API routes
 app.use('/api/auth', require('./routes/auth')); // Authentication routes (register, login)
+app.use('/api/widgets', widgetRoutes);  // Widget routes (cloudinary and mulet thing)
 
 // Timeline fetching api route
 app.use('/api/posts', require('./routes/posts'));
