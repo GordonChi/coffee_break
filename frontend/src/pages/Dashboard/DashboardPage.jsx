@@ -131,16 +131,15 @@ export default function DashboardPage() {
                 </form>
             </main>
 
-            {/* Widget Canvas */}
-            <section className="widget-canvas">
+            {/* Widget Viewport (The Window) */}
+            <section className="widget-viewport">
                 <div className="canvas-header">
                     <span>0 widgets active</span>
                     <button className="add-widget-btn">+ Add Widget</button>
                 </div>
                 
-
-                {/* --- CAROUSEL PIPELINE --- */}
-                <div style={{ position: 'absolute', top: '150px', left: '50px' }}>
+                {/* Widget Canvas (The 1500x1500 Board) */}
+                <div className="widget-canvas-area">
                     <CarouselWidget userId={userId} />
                 </div>
             </section>

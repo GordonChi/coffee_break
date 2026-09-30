@@ -1,10 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import Draggable from 'react-draggable';
 import './CarouselWidget.css';
+
 
 export default function CarouselWidget({ userId }) {
     const [images, setImages] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [widgetId, setWidgetId] = useState(null); // Track the MongoDB document ID
+
+    // Positional data for the draggable widget
+    const [position, setPosition] = useState({ x: 50, y: 150 });
+    const [isLoaded, setIsLoaded] = useState(false); // Track if the widget has been loaded from the database
+
+    const nodeRef = useRef(null); // Ref for the draggable node
     
     const [selectedFile, setSelectedFile] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -23,13 +31,19 @@ export default function CarouselWidget({ userId }) {
                     // If found, set the widget ID and images state
                     if (carousel) {
                         setWidgetId(carousel._id);
-                        if (carousel.data?.imageUrls) {
-                            setImages(carousel.data.imageUrls);
-                        }
+                        if (carousel.data?.imageUrls) setImages(carousel.data.imageUrls);
+
+                        // load the saved position from MongoDB if it exists
+                        if (carousel.position) setPosition(carousel.position);
                     }
                 }
-            } catch (error) {
+            } 
+            catch (error) {
                 console.error("Failed to fetch widget data:", error);
+            }
+            finally {
+                // Set the loaded state to true after the fetch attempt
+                setIsLoaded(true);
             }
         };
         fetchWidget();
@@ -68,7 +82,7 @@ export default function CarouselWidget({ userId }) {
                     body: JSON.stringify({
                         userId: userId,
                         widgetType: 'carousel',
-                        position: { x: 50, y: 150 },
+                        position: position,
                         data: { imageUrls: updatedImages } 
                     })
                 });
@@ -81,10 +95,37 @@ export default function CarouselWidget({ userId }) {
                     setSelectedFile(null); // Reset input
                 }
             }
-        } catch (error) {
+        } 
+        catch (error) {
             console.error("Pipeline failed:", error);
-        } finally {
+        } 
+        finally {
             setIsUploading(false);
+        }
+    };
+
+    // Save position on drag stop
+    const handleDragStop = async (e, data) => {
+        const newPos = { x: data.x, y: data.y };
+        setPosition(newPos); // Update local state immediately for responsiveness
+
+        if (widgetId) {
+            try {
+                // Quietly save the new position to MongoDB without blocking the UI
+                await fetch(`http://127.0.0.1:5000/api/widgets/${widgetId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: userId,
+                        widgetType: 'carousel',
+                        position: newPos,
+                        data: { imageUrls: images } // Keep existing images
+                    })
+                });
+            }
+            catch (error) {
+                console.error("Failed to save widget position:", error);
+            }
         }
     };
 
@@ -120,41 +161,79 @@ export default function CarouselWidget({ userId }) {
     const nextImage = () => setCurrentIndex(prev => (prev === images.length - 1 ? 0 : prev + 1));
     const prevImage = () => setCurrentIndex(prev => (prev === 0 ? images.length - 1 : prev - 1));
 
-    return (
-        <div className="mock-widget carousel-widget-container">
-            <h4>Photo Carousel</h4>
-            
-            <div className="carousel-form-group">
-                <input type="file" accept="image/*" onChange={handleFileSelect} />
-                <button className="carousel-upload-btn" onClick={handleUpload} disabled={!selectedFile || isUploading}>
-                    {isUploading ? 'Uploading...' : 'Upload Image'}
-                </button>
-            </div>
+    // Render nothing until the widget has been loaded from the database
+    if (!isLoaded) return null;
 
-            {images.length > 0 && (
-                <div className="carousel-preview-container" style={{ marginTop: '15px' }}>
-                    <img 
-                        src={images[currentIndex]} 
-                        alt={`Slide ${currentIndex}`} 
-                        className="carousel-preview-image" 
-                    />
-                    
-                    {images.length > 1 && (
-                        <div style={{ display: 'flex', justifyContent: 'space-between', margin: '10px 0' }}>
-                            <button onClick={prevImage} style={{ cursor: 'pointer' }}>&larr; Prev</button>
-                            <span style={{ fontSize: '0.8rem' }}>{currentIndex + 1} / {images.length}</span>
-                            <button onClick={nextImage} style={{ cursor: 'pointer' }}>Next &rarr;</button>
+    return (
+        <Draggable 
+            nodeRef={nodeRef} 
+            defaultPosition={position}  
+            handle=".drag-handle" 
+            bounds="parent" 
+            onStart={(e, data) => console.log("1. Mouse clicked the handle! Starting drag...")}
+            onDrag={(e, data) => console.log(`2. Dragging... Current X: ${data.x}, Y: ${data.y}`)}
+            onStop={(e, data) => {
+                console.log("3. Mouse released! Saving to DB...");
+                handleDragStop(e, data);
+            }}
+        >
+            {/* 1. Override the default padding and hide overflow so the header corners round nicely */}
+            <div ref={nodeRef} className="mock-widget carousel-widget-container" style={{ position: 'absolute', padding: 0, overflow: 'hidden' }}>
+                
+                {/* 2. The Window Title Bar (Functions as the completely clickable drag handle) */}
+                <div 
+                    className="drag-handle" 
+                    style={{ 
+                        cursor: 'grab', 
+                        padding: '10px 15px', 
+                        backgroundColor: 'rgba(255, 255, 255, 0.03)', 
+                        borderBottom: '1px solid var(--border-color)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        userSelect: 'none' // Prevents the title text from highlighting while dragging
+                    }}
+                >
+                    <span style={{ fontSize: '0.85rem', fontWeight: '600', margin: 0, color: 'var(--text-secondary)' }}>
+                        Photo Carousel
+                    </span>
+                </div>
+
+                {/* 3. The Inner Content Area (Restores the padding for your actual widget UI) */}
+                <div style={{ padding: '1rem' }}>
+
+                    {images.length > 0 && (
+                        <div className="carousel-preview-container" style={{ marginTop: '5px' }}>
+                            <img 
+                                src={images[currentIndex]} 
+                                alt={`Slide ${currentIndex}`} 
+                                className="carousel-preview-image" 
+                            />
+                            
+                            {images.length > 1 && (
+                                <div style={{ display: 'flex', justifyContent: 'space-between', margin: '10px 0' }}>
+                                    <button onClick={prevImage} style={{ cursor: 'pointer', background: 'none', border: 'none', color: 'var(--accent-color)' }}>&larr; Prev</button>
+                                    <span style={{ fontSize: '0.8rem' }}>{currentIndex + 1} / {images.length}</span>
+                                    <button onClick={nextImage} style={{ cursor: 'pointer', background: 'none', border: 'none', color: 'var(--accent-color)' }}>Next &rarr;</button>
+                                </div>
+                            )}
+
+                            <div className="carousel-form-group">
+                                <input type="file" accept="image/*" onChange={handleFileSelect} />
+                                <button className="carousel-upload-btn" onClick={handleUpload} disabled={!selectedFile || isUploading}>
+                                    {isUploading ? 'Uploading...' : 'Upload Image'}
+                                </button>
+                            </div>
+                            
+                            <button 
+                                onClick={handleDelete}
+                                style={{ width: '100%', marginTop: '5px', padding: '6px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                            >
+                                Delete Photo
+                            </button>
                         </div>
                     )}
-                    
-                    <button 
-                        onClick={handleDelete}
-                        style={{ width: '100%', marginTop: '5px', padding: '6px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                    >
-                        Delete Photo
-                    </button>
                 </div>
-            )}
-        </div>
+            </div>
+        </Draggable>
     );
 }
