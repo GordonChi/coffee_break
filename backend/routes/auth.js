@@ -84,7 +84,6 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log('boop')
         // 1. Does this user exist in the database?
         const user = await User.findOne({ email });
         if (!user) {

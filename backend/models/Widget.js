@@ -25,3 +25,5 @@ const widgetSchema = new mongoose.Schema({
         default: {}
     }
 }, { timestamps: true })
+
+module.exports = mongoose.model('Widget', widgetSchema);

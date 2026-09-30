@@ -141,7 +141,7 @@ export default function DashboardPage() {
 
                 {/* --- CAROUSEL PIPELINE --- */}
                 <div style={{ position: 'absolute', top: '150px', left: '50px' }}>
-                    <CarouselWidget />
+                    <CarouselWidget userId={userId} />
                 </div>
             </section>
 

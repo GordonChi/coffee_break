@@ -52,6 +52,7 @@ router.post('/', async (req, res) => {
         res.status(201).json(savedWidget);
     }
     catch (error) {
+        console.error("MongoDB save error:", error);
         res.status(500).json({ error: "Failed to save widget to database" });
     }
 });
@@ -63,6 +64,7 @@ router.get('/:userId', async (req, res) => {
         res.status(200).json(widgets);
     }
     catch (error){
+        console.error("MongoDB fetch error:", error);
         res.status(500).json({ error: "Failed to fetch widgets" });
     }
 });
