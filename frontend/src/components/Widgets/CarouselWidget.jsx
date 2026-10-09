@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import Draggable from 'react-draggable';
 import './CarouselWidget.css';
 
-
 export default function CarouselWidget({ userId }) {
     const [images, setImages] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -201,6 +200,15 @@ export default function CarouselWidget({ userId }) {
                 {/* 3. The Inner Content Area (Restores the padding for your actual widget UI) */}
                 <div style={{ padding: '1rem' }}>
 
+                    {/* Moved outside the conditional check so it always renders */}
+                    <div className="carousel-form-group" style={{ marginBottom: images.length > 0 ? '15px' : '0' }}>
+                        <input type="file" accept="image/*" onChange={handleFileSelect} />
+                        <button className="carousel-upload-btn" onClick={handleUpload} disabled={!selectedFile || isUploading}>
+                            {isUploading ? 'Uploading...' : 'Upload Image'}
+                        </button>
+                    </div>
+
+                    {/* Only show the preview area if there are actually images */}
                     {images.length > 0 && (
                         <div className="carousel-preview-container" style={{ marginTop: '5px' }}>
                             <img 
@@ -216,13 +224,6 @@ export default function CarouselWidget({ userId }) {
                                     <button onClick={nextImage} style={{ cursor: 'pointer', background: 'none', border: 'none', color: 'var(--accent-color)' }}>Next &rarr;</button>
                                 </div>
                             )}
-
-                            <div className="carousel-form-group">
-                                <input type="file" accept="image/*" onChange={handleFileSelect} />
-                                <button className="carousel-upload-btn" onClick={handleUpload} disabled={!selectedFile || isUploading}>
-                                    {isUploading ? 'Uploading...' : 'Upload Image'}
-                                </button>
-                            </div>
                             
                             <button 
                                 onClick={handleDelete}
