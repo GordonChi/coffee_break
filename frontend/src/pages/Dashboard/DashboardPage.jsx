@@ -11,10 +11,15 @@ export default function DashboardPage() {
     const [postContent, setPostContent] = useState('');
     // States for fetched timeline
     const [posts, setPosts] = useState([]); // Fixed: renamed to 'posts'
+    // States for sidebar toggle on/off
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    // States for middle partition (400 px by default)
+    const [feedWidth, setFeedWidth] = useState(400);
+    const [isDragging, setIsDragging] = useState(false);
 
     // Load the timeline when the dashboard first loads
     // using useEffect
-    useEffect(() => { // Fixed: Removed the extra '('
+    useEffect(() => {
         const fetchTimeLine = async () => {
             try {
                 // use the userId for a query parameter to 'filter' only userIds timeline
@@ -31,6 +36,63 @@ export default function DashboardPage() {
             fetchTimeLine();
         }
     }, [userId]);
+
+    // Event handlers for resizing windows
+    useEffect(() => {
+        /* 
+        If the mouse moves while the handle is being clicked:
+        Find the X position of where the mouse is to reposition the handle
+        */
+        const handleMouseMove = (e) => {
+            if (!isDragging) return;
+
+            /* 
+            Find the current screen size, this way it doesn't matter if
+            the user is working on HD, SD, vertical screens, UHD or other
+            niche resolutions
+            */
+            const screenWidth = window.innerWidth;
+
+            /*
+            The feed should never be under 30% or above 60% of the screen
+            clamp it between these two values
+            */
+            const minWidth = screenWidth * 0.30;
+            const maxWidth = screenWidth * 0.60;
+
+            // If sidebar is open, take the difference.
+            const sidebarOffset = isSidebarOpen ? 250 : 0;
+            const rawWidth = e.clientX - sidebarOffset;
+
+            // Clamp it!
+            const clampedWidth = Math.max(minWidth, Math.min(rawWidth, maxWidth));
+
+            setFeedWidth(clampedWidth);
+
+
+
+        };
+
+        const handleMouseUp = () => {
+            setIsDragging(false);
+        };
+
+        /* 
+        If the user is clicking on the handle:
+        mousemove - the user moved the mouse
+        mouseup - the user is no longer clicking the handle
+        */
+        if (isDragging){
+            window.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseup', handleMouseUp);
+        }
+
+        // Cleanup
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        }
+    }, [isDragging]);
 
     // Handle submitting posts to the backend
     const handleCreatePost = async (e) => {
@@ -78,7 +140,7 @@ export default function DashboardPage() {
         <div className="dashboard-master-layout">
             
             {/* Sidebar */}
-            <aside className="sidebar-nav">
+            <aside className={`sidebar-nav ${isSidebarOpen ? '' : 'collapsed'}`}>
                 <div className="sidebar-logo">
                     <span className="brand-icon">☕</span>
                     <h2>Menu</h2>
@@ -94,13 +156,21 @@ export default function DashboardPage() {
             </aside>
 
             {/* Center Feed */}
-            <main className="center-feed">
+            <main className="center-feed" style={{ width: `${feedWidth}px`}}>
                 <div className="feed-header">
+                    <button 
+                        className="hamburger-btn" 
+                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                        title={isSidebarOpen ? "Close Menu" : "Open Menu"}
+                    >
+                        ☰
+                    </button>
                     <h3>Your Feed</h3>
                 </div>
 
                 {/* Scrollable area */}
                 <div className="feed-content posts-scroll-area">
+                    {/* If there are no posts yet */ }
                     {posts.length === 0 ? (
                         <div className="placeholder-post">
                             <p>No posts yet. Start the conversation!</p>
@@ -130,6 +200,13 @@ export default function DashboardPage() {
                     </button>
                 </form>
             </main>
+
+            {/* Resizing div */ }
+            <div 
+                className="resizer-handle"
+                onMouseDown={() => setIsDragging(true)}
+            >
+            </div>
 
             {/* Widget Viewport (The Window) */}
             <section className="widget-viewport">

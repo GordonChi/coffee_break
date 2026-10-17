@@ -17,6 +17,19 @@
     display: flex;
     flex-direction: column;
     padding: 1.5rem;
+    /* Added new slide out features */
+    transition: width 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* Added new collapsed view of the sidebar */
+.sidebar-nav.collapsed {
+    width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    border-right: none;
+    opacity: 0; 
 }
 
 .sidebar-logo {
@@ -77,6 +90,47 @@
     top: 0;
     background-color: var(--surface-color);
     z-index: 10;
+    /* Alignment for hamburger menu */
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.feed-header h3 {
+    margin: 0; /* Removes default gap so it sits perfectly level with the button */
+}
+
+/* Hamburger Button Styling */
+.hamburger-btn {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.hamburger-btn:hover {
+    color: var(--accent-color);
+    transform: scale(1.1);
+}
+
+/* Div to seperate the two info channels */
+.resizer-handle {
+    width: 6px;
+    background-color: var(--border-color);
+    cursor: col-resize;
+    transition: background-color 0.2s ease;
+}
+
+/* Give the handle some type of interaction to let user know it is interactive */
+.resizer-handle:hover
+.resizer-handle:active {
+    background-color: var(--accent-color);
 }
 
 .feed-content {
