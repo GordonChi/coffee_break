@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import './DashboardPage.css';
+import React, { useEffect, useState, useRef } from 'react'; // I should really start commenting when I add stuff
+import './DashboardPage.css';                               // useRef added in version 0.5(?) (we're making up a starting point)
 import CarouselWidget from '../../components/Widgets/CarouselWidget';
 
 export default function DashboardPage() {
@@ -16,6 +16,10 @@ export default function DashboardPage() {
     // States for middle partition (400 px by default)
     const [feedWidth, setFeedWidth] = useState(400);
     const [isDragging, setIsDragging] = useState(false);
+    // Stuff for the click-and-drag widget area movement
+    const viewportRef = useRef(null);   // Using useRef as to not make React re-render the page when making changes
+    const [isPanning, setIsPanning] = useState(false)
+    const panState = useRef({ isDown: false, startX: 0, startY: 0, scrollLeft: 0, scrollTop: 0});
 
     // Load the timeline when the dashboard first loads
     // using useEffect
@@ -69,9 +73,8 @@ export default function DashboardPage() {
 
             setFeedWidth(clampedWidth);
 
-
-
         };
+
 
         const handleMouseUp = () => {
             setIsDragging(false);
@@ -93,6 +96,44 @@ export default function DashboardPage() {
             window.removeEventListener('mouseup', handleMouseUp);
         }
     }, [isDragging]);
+
+            const handleCanvasMouseDown = (e) => {
+            // Don't let the user move the widget window if the user is moving a widget
+            if (!e.target.classList.contains('widget-canvas-area') && !e.target.classList.contains('widget-viewport')){
+                return; // Ignore clicks on widgets, buttons, or anything else
+            }
+
+            e.preventDefault(); // blocks the highlighting text
+
+            setIsPanning(true);
+            panState.current.isDown = true;
+            panState.current.startX = e.pageX - viewportRef.current.offsetLeft;
+            panState.current.startY = e.pageY - viewportRef.current.offsetTop;
+            panState.current.scrollLeft = viewportRef.current.scrollLeft;
+            panState.current.scrollTop = viewportRef.current.scrollTop;
+        };
+
+        const handleCanvasMouseMove = (e) => {
+            if (!panState.current.isDown) return;
+            e.preventDefault();     // prevents the highlighting of text and stuff
+
+            const x = e.pageX - viewportRef.current.offsetLeft;
+            const y = e.pageY - viewportRef.current.offsetTop;
+
+            // Calculate how far the mouse moved
+            const walkX = x - panState.current.startX;
+            const walkY = y - panState.current.startY;
+
+            // Update the scroll position
+            viewportRef.current.scrollLeft = panState.current.scrollLeft - walkX;
+            viewportRef.current.scrollTop = panState.current.scrollTop - walkY;
+        };
+
+        const handleCanvasMouseUpOrLeave = () => {
+            setIsPanning(false);
+            panState.current.isDown = false;
+        };
+
 
     // Handle submitting posts to the backend
     const handleCreatePost = async (e) => {
@@ -209,7 +250,15 @@ export default function DashboardPage() {
             </div>
 
             {/* Widget Viewport (The Window) */}
-            <section className="widget-viewport">
+            {/* Widget Viewport (The Window) */}
+            <section 
+                className={`widget-viewport ${isPanning ? 'panning' : ''}`}
+                ref={viewportRef}
+                onMouseDown={handleCanvasMouseDown}
+                onMouseMove={handleCanvasMouseMove}
+                onMouseUp={handleCanvasMouseUpOrLeave}
+                onMouseLeave={handleCanvasMouseUpOrLeave}
+            >
                 <div className="canvas-header">
                     <span>0 widgets active</span>
                     <button className="add-widget-btn">+ Add Widget</button>
