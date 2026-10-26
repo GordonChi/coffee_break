@@ -281,3 +281,34 @@
     margin: 0;
     padding-left: 1.25rem;
 }
+
+/* The container handles all the sticky positioning and flex spacing */
+.widget-hud-container {
+    position: sticky;
+    top: 20px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end; /* Shoves everything to the right */
+    align-items: center; /* Vertically centers the text with the button */
+    gap: 15px; /* Creates an unbreakable space between the text and button */
+    padding-right: 20px; /* Snaps it away from the right edge */
+    z-index: 100;
+    pointer-events: none; /* Lets you click through the invisible empty space to pan the canvas */
+}
+
+/* The text only needs to define its color */
+.widget-hud-text {
+    color: var(--text-secondary);
+}
+
+/* The button defines its style and re-enables pointer events */
+.widget-hud-btn {
+    pointer-events: auto; /* Crucial: Re-enables clicking on the actual button */
+    padding: 8px 16px;
+    background-color: var(--accent-color);
+    color: orange;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}

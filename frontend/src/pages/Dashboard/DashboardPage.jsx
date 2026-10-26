@@ -250,7 +250,6 @@ export default function DashboardPage() {
             </div>
 
             {/* Widget Viewport (The Window) */}
-            {/* Widget Viewport (The Window) */}
             <section 
                 className={`widget-viewport ${isPanning ? 'panning' : ''}`}
                 ref={viewportRef}
@@ -258,12 +257,11 @@ export default function DashboardPage() {
                 onMouseMove={handleCanvasMouseMove}
                 onMouseUp={handleCanvasMouseUpOrLeave}
                 onMouseLeave={handleCanvasMouseUpOrLeave}
-            >
-                <div className="canvas-header">
-                    <span>0 widgets active</span>
-                    <button className="add-widget-btn">+ Add Widget</button>
-                </div>
-                
+            >   
+            <div className="widget-hud-container">
+                <span className="widget-hud-text">0 widgets active</span>
+                <button className="widget-hud-btn">+ Add Widget</button>
+            </div>
                 {/* Widget Canvas (The 1500x1500 Board) */}
                 <div className="widget-canvas-area">
                     <CarouselWidget userId={userId} />
