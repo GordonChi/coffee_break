@@ -31,6 +31,9 @@ app.use('/api/widgets', widgetRoutes);  // Widget routes (cloudinary and mulet t
 // Timeline fetching api route
 app.use('/api/posts', require('./routes/posts'));
 
+// user widget dashboard routes
+app.use('/api/dashboard', require('./routes/dashboardRoutes'));
+
 // Test route
 app.post('/api/test', (req, res) => {
     console.log("SUCCESS: POST request made it through the middleware!");

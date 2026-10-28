@@ -3,7 +3,7 @@ const router = express.Router();
 const Post = require('../models/Post');
 const User = require('../models/User');
 
-// Making a new post (user)
+// POST: Making a new post (user)
 router.post('/', async (req, res) => {
     console.log("Backend received this body:", req.body);
 
@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
 });
 
 
-// Getting posts to populate feed
+// GET: Getting posts to populate feed
 router.get('/timeline', async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;

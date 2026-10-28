@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import Draggable from 'react-draggable';
 import './CarouselWidget.css';
 
-export default function CarouselWidget({ userId }) {
+export default function CarouselWidget({ userId, widgetId, onRemove }) {
     const [images, setImages] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [widgetId, setWidgetId] = useState(null); // Track the MongoDB document ID
+    const [dbId, setDbId] = useState(null); // Track the MongoDB document ID (changed the name)
 
     // Positional data for the draggable widget
     const [position, setPosition] = useState({ x: 50, y: 150 });
@@ -29,7 +29,7 @@ export default function CarouselWidget({ userId }) {
                     
                     // If found, set the widget ID and images state
                     if (carousel) {
-                        setWidgetId(carousel._id);
+                        setDbId(carousel._id);
                         if (carousel.data?.imageUrls) setImages(carousel.data.imageUrls);
 
                         // load the saved position from MongoDB if it exists
@@ -70,9 +70,9 @@ export default function CarouselWidget({ userId }) {
                 const updatedImages = [...images, cloudData.imageUrl]; // Append new image to existing array
 
                 // Save the updated image URLs to MongoDB
-                const method = widgetId ? 'PUT' : 'POST';
-                const endpoint = widgetId 
-                    ? `http://127.0.0.1:5000/api/widgets/${widgetId}` 
+                const method = dbId ? 'PUT' : 'POST';
+                const endpoint = dbId 
+                    ? `http://127.0.0.1:5000/api/widgets/${dbId}` 
                     : 'http://127.0.0.1:5000/api/widgets';
 
                 const dbResponse = await fetch(endpoint, {
@@ -89,7 +89,7 @@ export default function CarouselWidget({ userId }) {
                 if (dbResponse.ok) {
                     const savedWidget = await dbResponse.json();
                     setImages(updatedImages);
-                    setWidgetId(savedWidget._id || widgetId); 
+                    setDbId(savedWidget._id || dbId); 
                     setCurrentIndex(updatedImages.length - 1); // Auto-scroll to the new photo
                     setSelectedFile(null); // Reset input
                 }
@@ -108,10 +108,10 @@ export default function CarouselWidget({ userId }) {
         const newPos = { x: data.x, y: data.y };
         setPosition(newPos); // Update local state immediately for responsiveness
 
-        if (widgetId) {
+        if (dbId) {
             try {
                 // Quietly save the new position to MongoDB without blocking the UI
-                await fetch(`http://127.0.0.1:5000/api/widgets/${widgetId}`, {
+                await fetch(`http://127.0.0.1:5000/api/widgets/${dbId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -130,13 +130,13 @@ export default function CarouselWidget({ userId }) {
 
     // Delete the currently viewed image
     const handleDelete = async () => {
-        if (!widgetId || images.length === 0) return;
+        if (!dbId || images.length === 0) return;
         
         // Filter out the image currently on screen
         const updatedImages = images.filter((_, index) => index !== currentIndex);
         
         try {
-            const response = await fetch(`http://127.0.0.1:5000/api/widgets/${widgetId}`, {
+            const response = await fetch(`http://127.0.0.1:5000/api/widgets/${dbId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -155,6 +155,7 @@ export default function CarouselWidget({ userId }) {
             console.error("Failed to delete image:", error);
         }
     };
+
 
     // Carousel Navigation
     const nextImage = () => setCurrentIndex(prev => (prev === images.length - 1 ? 0 : prev + 1));
@@ -189,12 +190,20 @@ export default function CarouselWidget({ userId }) {
                         borderBottom: '1px solid var(--border-color)',
                         display: 'flex',
                         alignItems: 'center',
+                        justifyContent: 'space-between', // spaces the text and the button apart
                         userSelect: 'none' // Prevents the title text from highlighting while dragging
                     }}
                 >
                     <span style={{ fontSize: '0.85rem', fontWeight: '600', margin: 0, color: 'var(--text-secondary)' }}>
                         Photo Carousel
                     </span>
+                    <button 
+                        className="widget-close-btn" 
+                        onClick={() => onRemove(widgetId)}
+                        title="Remove Widget"
+                    >
+                        X
+                    </button>
                 </div>
 
                 {/* 3. The Inner Content Area (Restores the padding for your actual widget UI) */}

@@ -20,6 +20,14 @@ export default function DashboardPage() {
     const viewportRef = useRef(null);   // Using useRef as to not make React re-render the page when making changes
     const [isPanning, setIsPanning] = useState(false)
     const panState = useRef({ isDown: false, startX: 0, startY: 0, scrollLeft: 0, scrollTop: 0});
+    /*
+    There is a good read from the documentation on why we should track widgets so they don't affect each other:
+    https://react.dev/learn/sharing-state-between-components
+    In summary, multiple carousels could be referencing the same database resulting in the same database being
+    referenced by both (or more) carousels. This would mean that they would have the same pictures at their disposal and adding to one carousel
+    would add it to effectively "both" carousels. This is why we need to track the widgets in the dashboard and pass down the widgetId to each carousel so they can be unique.
+    */
+    const [activeWidgets, setActiveWidgets] = useState([]); // For the HUD display of active widgets
 
     // Load the timeline when the dashboard first loads
     // using useEffect
@@ -97,7 +105,7 @@ export default function DashboardPage() {
         }
     }, [isDragging]);
 
-            const handleCanvasMouseDown = (e) => {
+        const handleCanvasMouseDown = (e) => {
             // Don't let the user move the widget window if the user is moving a widget
             if (!e.target.classList.contains('widget-canvas-area') && !e.target.classList.contains('widget-viewport')){
                 return; // Ignore clicks on widgets, buttons, or anything else
@@ -134,29 +142,41 @@ export default function DashboardPage() {
             panState.current.isDown = false;
         };
 
+        // Adding widgets
+        const handleAddWidget = () => {
+            const newWidget = {
+                id: crypto.randomUUID(), // Unique ID for the widget
+                type: 'carousel'
+            };
+            // Update the activeWidgets state
+            setActiveWidgets([...activeWidgets, newWidget]);
+        };
 
-    // Handle submitting posts to the backend
-    const handleCreatePost = async (e) => {
-        e.preventDefault();
+        // Removing widgets
+        const handleRemoveWidget = (widgetId) => {
+            setActiveWidgets(activeWidgets.filter(widget => widget.id !== widgetId));
+        };
 
-        if (!postContent.trim()) return;
+        // Handle submitting posts to the backend
+        const handleCreatePost = async (e) => {
+            e.preventDefault();
 
-        try {
-            // Grab the userId from localStorage
-            const userId = localStorage.getItem('userId');
-            
-            // Checking what I am sending because I keep getting an error
-            // (old code now)
-            //console.log("Frontend is sending this payload:", { userId: userId, content: postContent });
+            if (!postContent.trim()) 
+                return;
 
-            const response = await fetch('http://127.0.0.1:5000/api/posts', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    userId: userId,
-                    content: postContent
-                })
-            });
+            try {
+                // Grab the userId from localStorage
+                const userId = localStorage.getItem('userId');
+
+                // Send the post to the backend
+                const response = await fetch('http://127.0.0.1:5000/api/posts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: userId,
+                        content: postContent
+                    })
+                });
 
             if (response.ok) {
                 const newPost = await response.json();
@@ -172,10 +192,10 @@ export default function DashboardPage() {
                 const errorData = await response.json();
                 console.error("Server rejected the post:", errorData);
             }
-        } catch (error) {
-            console.error("Network or fetch error:", error);
-        }
-    };
+            } catch (error) {
+                console.error("Network or fetch error:", error);
+            }
+        };
 
     return (
         <div className="dashboard-master-layout">
@@ -259,12 +279,27 @@ export default function DashboardPage() {
                 onMouseLeave={handleCanvasMouseUpOrLeave}
             >   
             <div className="widget-hud-container">
-                <span className="widget-hud-text">0 widgets active</span>
-                <button className="widget-hud-btn">+ Add Widget</button>
+                {/* Replacing the hardcoded numbers with the length of the activeWidgets array */}
+                <span className="widget-hud-text">{activeWidgets.length} widgets active</span>
+                <button className="widget-hud-btn" onClick={handleAddWidget}>
+                    + Add Widget
+                </button>
             </div>
                 {/* Widget Canvas (The 1500x1500 Board) */}
                 <div className="widget-canvas-area">
-                    <CarouselWidget userId={userId} />
+                    {activeWidgets.map((widget) => {
+                        if (widget.type === 'carousel') {
+                            return (
+                            <CarouselWidget 
+                                key={widget.id} 
+                                userId={userId} 
+                                widgetId={widget.id} // Need to pass this down to the CarouselWidget so it can be removed
+                                onRemove={() => handleRemoveWidget(widget.id)} 
+                            />
+                            );
+                        }
+                        return null; // Safety fallback in case a type isn't recognized
+                    })}
                 </div>
             </section>
 
