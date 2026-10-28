@@ -145,7 +145,7 @@ export default function DashboardPage() {
         // Adding widgets
         const handleAddWidget = () => {
             const newWidget = {
-                id: crypto.randomUUID(), // Unique ID for the widget
+                id: crypto.randomUUID(), // Unique ID for the widget    https://developer.mozilla.org/en-US/docs/Glossary/UUID
                 type: 'carousel'
             };
             // Update the activeWidgets state
