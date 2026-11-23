@@ -2,12 +2,12 @@
 .navbar-banner {
     display: flex;
     justify-content: space-between; /* Pushes left and right sections apart */
-    align-items: center; /* Vertically centers everything */
+    align-items: center;
     width: 100%;
-    padding: 16px 40px; /* Top/Bottom padding, Left/Right padding */
-    background-color: #111827; /* Dark background to match your app's outer shell */
+    padding: 16px 40px; 
+    background-color: #111827; 
     color: #ffffff;
-    box-sizing: border-box; /* Ensures padding doesn't break the 100% width */
+    box-sizing: border-box; 
     position: sticky;
     top: 0;
     z-index: 100;

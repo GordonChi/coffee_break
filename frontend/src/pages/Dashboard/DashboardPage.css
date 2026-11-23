@@ -75,25 +75,35 @@
 }
 
 /* Center Feed */
+.test-center {
+    width: 550px;
+    background-color: var(--surface-color);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
 .center-feed {
     width: 550px;
     background-color: var(--surface-color);
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .feed-header {
-    padding: 1.5rem;
+    padding: 1rem;
     border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 0;
-    background-color: var(--surface-color);
+    background-color: #fde047;
     z-index: 10;
     /* Alignment for hamburger menu */
     display: flex;
     align-items: center;
     gap: 15px;
+    flex-shrink: 0;
+    
 }
 
 .feed-header h3 {
@@ -140,8 +150,10 @@
     gap: 1.5rem;
     flex-grow: 1;
     overflow-y: auto;
+
 }
 
+/* These should be deleted later */
 .placeholder-post {
     background-color: var(--surface-color);
     border: 1px solid var(--border-color);
@@ -161,10 +173,12 @@
 /* Adding chatbox input styles */
 .chat-input-form {
     display: flex;
+    overflow-y: auto;
     gap: 10px;
     padding: 1.5rem;
     border-top: 1px solid var(--border-color);
     background-color: var(--surface-color);
+    flex-shrink: 0;
 }
 
 .chat-text-input {
@@ -177,6 +191,7 @@
     outline: none;
     font-size: 1rem;
     transition: border-color 0.2s;
+    resize: none;
 }
 
 .chat-text-input:focus {
