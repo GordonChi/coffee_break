@@ -197,7 +197,8 @@ export default function DashboardPage() {
             </aside>
 
             {/* Center Feed */}
-            <main className="center-feed" style={{ width: `${feedWidth}px`}}>
+            <container className="center-feed" style={{ width: `${feedWidth}px`}}>
+            {/*<main className="center-feed" style={{ width: `${feedWidth}px`}}>*/}
                 <div className="feed-header">
                     <button 
                         className="hamburger-btn" 
@@ -228,8 +229,8 @@ export default function DashboardPage() {
                 </div>
 
                 { /* input box area */ }
-                <form className='chat-input-form' onSubmit={handleCreatePost}>
-                    <input
+                <form className='chat-input-form' onSubmit={handleCreatePost} style={{ width: `${feedWidth-30}px`}}>
+                    <textarea
                         type="text"
                         value={postContent}
                         onChange={(e) => setPostContent(e.target.value)}
@@ -240,7 +241,8 @@ export default function DashboardPage() {
                         Send
                     </button>
                 </form>
-            </main>
+            {/*</container></main>*/}
+            </container>
 
             {/* Resizing div */ }
             <div 
