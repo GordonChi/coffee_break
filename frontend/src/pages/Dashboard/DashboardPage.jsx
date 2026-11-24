@@ -1,32 +1,28 @@
-import React, { useEffect, useState, useRef } from 'react'; // I should really start commenting when I add stuff
-import './DashboardPage.css';                               // useRef added in version 0.5(?) (we're making up a starting point)
-import CarouselWidget from '../../components/Widgets/CarouselWidget';
+import React, { useEffect, useState, useRef } from 'react';
+import './DashboardPage.css';
+import CarouselWidget from '../../components/Widgets/Carousel/CarouselWidget';
 
 export default function DashboardPage() {
-    // Grab the user from the login token
     const username = localStorage.getItem('username') || 'Traveler';
-    const userId = localStorage.getItem('userId'); // Fixed: getItem
+    const userId = localStorage.getItem('userId');
 
-    // States for the new post input
     const [postContent, setPostContent] = useState('');
-    // States for fetched timeline
-    const [posts, setPosts] = useState([]); // Fixed: renamed to 'posts'
-    // States for sidebar toggle on/off
+    const [posts, setPosts] = useState([]);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    // States for middle partition (400 px by default)
     const [feedWidth, setFeedWidth] = useState(400);
     const [isDragging, setIsDragging] = useState(false);
-    // Stuff for the click-and-drag widget area movement
-    const viewportRef = useRef(null);   // Using useRef as to not make React re-render the page when making changes
-    const [isPanning, setIsPanning] = useState(false)
-    const panState = useRef({ isDown: false, startX: 0, startY: 0, scrollLeft: 0, scrollTop: 0});
 
-    // Load the timeline when the dashboard first loads
-    // using useEffect
+    // Master ledger of all active widgets on the canvas
+    const [activeWidgets, setActiveWidgets] = useState([]);
+
+    const viewportRef = useRef(null);
+    const [isPanning, setIsPanning] = useState(false);
+    const panState = useRef({ isDown: false, startX: 0, startY: 0, scrollLeft: 0, scrollTop: 0 });
+
+    // Load timeline posts on mount
     useEffect(() => {
         const fetchTimeLine = async () => {
             try {
-                // use the userId for a query parameter to 'filter' only userIds timeline
                 const response = await fetch(`http://127.0.0.1:5000/api/posts/timeline?userId=${userId}`);
                 if (response.ok) {
                     const data = await response.json();
@@ -35,140 +31,144 @@ export default function DashboardPage() {
             } catch (error) {
                 console.error("Error fetching timeline:", error);
             }
-        }
-        if (userId) {
-            fetchTimeLine();
-        }
+        };
+        if (userId) fetchTimeLine();
     }, [userId]);
 
-    // Event handlers for resizing windows
+    // Load saved dashboard widget layout once on mount
     useEffect(() => {
-        /* 
-        If the mouse moves while the handle is being clicked:
-        Find the X position of where the mouse is to reposition the handle
-        */
+        const fetchDashboard = async () => {
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/api/dashboard/${userId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setActiveWidgets(data.widgets || []);
+                }
+            } catch (error) {
+                console.error("Error fetching dashboard layout:", error);
+            }
+        };
+        if (userId) fetchDashboard();
+    }, [userId]);
+
+    // Sync the full widgets array to MongoDB
+    const saveDashboardLayout = async (updatedWidgets) => {
+        if (!userId) return;
+        try {
+            await fetch(`http://127.0.0.1:5000/api/dashboard/${userId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ widgets: updatedWidgets })
+            });
+        } catch (error) {
+            console.error("Error saving dashboard layout:", error);
+        }
+    };
+
+    // Add a new widget instance with a unique client-side ID
+    const handleAddWidget = (type) => {
+        const newWidget = {
+            widgetId: crypto.randomUUID(),
+            type,
+            position: { x: 50, y: 150 },
+            data: {}
+        };
+        const updatedWidgets = [...activeWidgets, newWidget];
+        setActiveWidgets(updatedWidgets);
+        saveDashboardLayout(updatedWidgets);
+    };
+
+    // Remove a specific widget instance by its unique widgetId
+    const handleRemoveWidget = (widgetIdToRemove) => {
+        const updatedWidgets = activeWidgets.filter(w => w.widgetId !== widgetIdToRemove);
+        setActiveWidgets(updatedWidgets);
+        saveDashboardLayout(updatedWidgets);
+    };
+
+    // Update a specific widget's position or data without affecting other instances
+    const handleUpdateWidget = (widgetIdToUpdate, updates) => {
+        const updatedWidgets = activeWidgets.map(w =>
+            w.widgetId === widgetIdToUpdate
+                ? {
+                    ...w,
+                    ...updates,
+                    data: updates.data ? { ...w.data, ...updates.data } : w.data
+                }
+                : w
+        );
+        setActiveWidgets(updatedWidgets);
+        saveDashboardLayout(updatedWidgets);
+    };
+
+    // Event handlers for resizing feed partition
+    useEffect(() => {
         const handleMouseMove = (e) => {
             if (!isDragging) return;
-
-            /* 
-            Find the current screen size, this way it doesn't matter if
-            the user is working on HD, SD, vertical screens, UHD or other
-            niche resolutions
-            */
             const screenWidth = window.innerWidth;
-
-            /*
-            The feed should never be under 30% or above 60% of the screen
-            clamp it between these two values
-            */
             const minWidth = screenWidth * 0.30;
             const maxWidth = screenWidth * 0.60;
-
-            // If sidebar is open, take the difference.
             const sidebarOffset = isSidebarOpen ? 250 : 0;
             const rawWidth = e.clientX - sidebarOffset;
-
-            // Clamp it!
-            const clampedWidth = Math.max(minWidth, Math.min(rawWidth, maxWidth));
-
-            setFeedWidth(clampedWidth);
-
+            setFeedWidth(Math.max(minWidth, Math.min(rawWidth, maxWidth)));
         };
 
+        const handleMouseUp = () => setIsDragging(false);
 
-        const handleMouseUp = () => {
-            setIsDragging(false);
-        };
-
-        /* 
-        If the user is clicking on the handle:
-        mousemove - the user moved the mouse
-        mouseup - the user is no longer clicking the handle
-        */
-        if (isDragging){
+        if (isDragging) {
             window.addEventListener('mousemove', handleMouseMove);
             window.addEventListener('mouseup', handleMouseUp);
         }
 
-        // Cleanup
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [isDragging, isSidebarOpen]);
+
+    const handleCanvasMouseDown = (e) => {
+        if (!e.target.classList.contains('widget-canvas-area') && !e.target.classList.contains('widget-viewport')) {
+            return;
         }
-    }, [isDragging]);
+        e.preventDefault();
+        setIsPanning(true);
+        panState.current.isDown = true;
+        panState.current.startX = e.pageX - viewportRef.current.offsetLeft;
+        panState.current.startY = e.pageY - viewportRef.current.offsetTop;
+        panState.current.scrollLeft = viewportRef.current.scrollLeft;
+        panState.current.scrollTop = viewportRef.current.scrollTop;
+    };
 
-            const handleCanvasMouseDown = (e) => {
-            // Don't let the user move the widget window if the user is moving a widget
-            if (!e.target.classList.contains('widget-canvas-area') && !e.target.classList.contains('widget-viewport')){
-                return; // Ignore clicks on widgets, buttons, or anything else
-            }
+    const handleCanvasMouseMove = (e) => {
+        if (!panState.current.isDown) return;
+        e.preventDefault();
+        const x = e.pageX - viewportRef.current.offsetLeft;
+        const y = e.pageY - viewportRef.current.offsetTop;
+        viewportRef.current.scrollLeft = panState.current.scrollLeft - (x - panState.current.startX);
+        viewportRef.current.scrollTop = panState.current.scrollTop - (y - panState.current.startY);
+    };
 
-            e.preventDefault(); // blocks the highlighting text
+    const handleCanvasMouseUpOrLeave = () => {
+        setIsPanning(false);
+        panState.current.isDown = false;
+    };
 
-            setIsPanning(true);
-            panState.current.isDown = true;
-            panState.current.startX = e.pageX - viewportRef.current.offsetLeft;
-            panState.current.startY = e.pageY - viewportRef.current.offsetTop;
-            panState.current.scrollLeft = viewportRef.current.scrollLeft;
-            panState.current.scrollTop = viewportRef.current.scrollTop;
-        };
-
-        const handleCanvasMouseMove = (e) => {
-            if (!panState.current.isDown) return;
-            e.preventDefault();     // prevents the highlighting of text and stuff
-
-            const x = e.pageX - viewportRef.current.offsetLeft;
-            const y = e.pageY - viewportRef.current.offsetTop;
-
-            // Calculate how far the mouse moved
-            const walkX = x - panState.current.startX;
-            const walkY = y - panState.current.startY;
-
-            // Update the scroll position
-            viewportRef.current.scrollLeft = panState.current.scrollLeft - walkX;
-            viewportRef.current.scrollTop = panState.current.scrollTop - walkY;
-        };
-
-        const handleCanvasMouseUpOrLeave = () => {
-            setIsPanning(false);
-            panState.current.isDown = false;
-        };
-
-
-    // Handle submitting posts to the backend
     const handleCreatePost = async (e) => {
         e.preventDefault();
-
         if (!postContent.trim()) return;
 
         try {
-            // Grab the userId from localStorage
-            const userId = localStorage.getItem('userId');
-            
-            // Checking what I am sending because I keep getting an error
-            // (old code now)
-            //console.log("Frontend is sending this payload:", { userId: userId, content: postContent });
-
             const response = await fetch('http://127.0.0.1:5000/api/posts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    userId: userId,
-                    content: postContent
-                })
+                body: JSON.stringify({ userId, content: postContent })
             });
 
             if (response.ok) {
                 const newPost = await response.json();
-                console.log("Post successfully created:", newPost);
-
-                newPost.user = { username: username };
-
+                newPost.user = { username };
                 setPosts([...posts, newPost]);
-
-                setPostContent(''); 
+                setPostContent('');
             } else {
-                // If an error occurs while sending
                 const errorData = await response.json();
                 console.error("Server rejected the post:", errorData);
             }
@@ -179,7 +179,6 @@ export default function DashboardPage() {
 
     return (
         <div className="dashboard-master-layout">
-            
             {/* Sidebar */}
             <aside className={`sidebar-nav ${isSidebarOpen ? '' : 'collapsed'}`}>
                 <div className="sidebar-logo">
@@ -197,11 +196,10 @@ export default function DashboardPage() {
             </aside>
 
             {/* Center Feed */}
-            <container className="center-feed" style={{ width: `${feedWidth}px`}}>
-            {/*<main className="center-feed" style={{ width: `${feedWidth}px`}}>*/}
+            <container className="center-feed" style={{ width: `${feedWidth}px` }}>
                 <div className="feed-header">
-                    <button 
-                        className="hamburger-btn" 
+                    <button
+                        className="hamburger-btn"
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                         title={isSidebarOpen ? "Close Menu" : "Open Menu"}
                     >
@@ -210,9 +208,7 @@ export default function DashboardPage() {
                     <h3>Your Feed</h3>
                 </div>
 
-                {/* Scrollable area */}
                 <div className="feed-content posts-scroll-area">
-                    {/* If there are no posts yet */ }
                     {posts.length === 0 ? (
                         <div className="placeholder-post">
                             <p>No posts yet. Start the conversation!</p>
@@ -228,8 +224,7 @@ export default function DashboardPage() {
                     )}
                 </div>
 
-                { /* input box area */ }
-                <form className='chat-input-form' onSubmit={handleCreatePost} style={{ width: `${feedWidth-30}px`}}>
+                <form className='chat-input-form' onSubmit={handleCreatePost} style={{ width: `${feedWidth - 30}px` }}>
                     <textarea
                         type="text"
                         value={postContent}
@@ -241,35 +236,54 @@ export default function DashboardPage() {
                         Send
                     </button>
                 </form>
-            {/*</container></main>*/}
             </container>
 
-            {/* Resizing div */ }
-            <div 
+            {/* Resizing div */}
+            <div
                 className="resizer-handle"
                 onMouseDown={() => setIsDragging(true)}
-            >
-            </div>
+            />
 
-            {/* Widget Viewport (The Window) */}
-            <section 
+            {/* Widget Viewport */}
+            <section
                 className={`widget-viewport ${isPanning ? 'panning' : ''}`}
                 ref={viewportRef}
                 onMouseDown={handleCanvasMouseDown}
                 onMouseMove={handleCanvasMouseMove}
                 onMouseUp={handleCanvasMouseUpOrLeave}
                 onMouseLeave={handleCanvasMouseUpOrLeave}
-            >   
-            <div className="widget-hud-container">
-                <span className="widget-hud-text">0 widgets active</span>
-                <button className="widget-hud-btn">+ Add Widget</button>
-            </div>
-                {/* Widget Canvas (The 1500x1500 Board) */}
+            >
+                <div className="widget-hud-container">
+                    <span className="widget-hud-text">
+                        {activeWidgets.length} {activeWidgets.length === 1 ? 'widget' : 'widgets'} active
+                    </span>
+                    <button
+                        className="widget-hud-btn"
+                        onClick={() => handleAddWidget('carousel')}
+                    >
+                        + Add Widget
+                    </button>
+                </div>
+
+                {/* Widget Canvas */}
                 <div className="widget-canvas-area">
-                    <CarouselWidget userId={userId} />
+                    {activeWidgets.map((widget) => {
+                        if (widget.type === 'carousel') {
+                            return (
+                                <CarouselWidget
+                                    key={widget.widgetId}
+                                    widgetId={widget.widgetId}
+                                    position={widget.position}
+                                    data={widget.data}
+                                    onUpdate={handleUpdateWidget}
+                                    onRemove={handleRemoveWidget}
+                                />
+                            );
+                        }
+                        return null;
+                    })}
                 </div>
             </section>
-
         </div>
     );
 }

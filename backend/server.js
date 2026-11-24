@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const widgetRoutes = require('./routes/widgets.js');
+const dashboardRoutes = require('./routes/dashboardRoutes.js');
 
 // Initialize Express app
 const app = express();
@@ -40,6 +41,8 @@ app.post('/api/test', (req, res) => {
 app.get(`/`, (req, res) => {
     res.send(`Coffee Break API is running!`);
 });
+// Dashboard routes (fetching and saving dashboard layouts)
+app.use('/api/dashboard', dashboardRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5000;
