@@ -1,0 +1,329 @@
+/* Master Container */
+.dashboard-master-layout {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Sidebar */
+.sidebar-nav {
+    width: 250px;
+    background-color: var(--surface-color);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    /* Added new slide out features */
+    transition: width 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* Added new collapsed view of the sidebar */
+.sidebar-nav.collapsed {
+    width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    border-right: none;
+    opacity: 0; 
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 2rem;
+}
+
+.sidebar-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex-grow: 1;
+}
+
+.nav-item {
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.nav-item:hover {
+    background-color: var(--bg-color);
+}
+
+.nav-item.active {
+    background-color: var(--bg-color);
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+.user-greeting {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Center Feed */
+.test-center {
+    width: 550px;
+    background-color: var(--surface-color);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.center-feed {
+    width: 550px;
+    background-color: var(--surface-color);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.feed-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    background-color: #fde047;
+    z-index: 10;
+    /* Alignment for hamburger menu */
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+    
+}
+
+.feed-header h3 {
+    margin: 0; /* Removes default gap so it sits perfectly level with the button */
+}
+
+/* Hamburger Button Styling */
+.hamburger-btn {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.hamburger-btn:hover {
+    color: var(--accent-color);
+    transform: scale(1.1);
+}
+
+/* Div to seperate the two info channels */
+.resizer-handle {
+    width: 6px;
+    background-color: var(--border-color);
+    cursor: col-resize;
+    transition: background-color 0.2s ease;
+}
+
+/* Give the handle some type of interaction to let user know it is interactive */
+.resizer-handle:hover
+.resizer-handle:active {
+    background-color: var(--accent-color);
+}
+
+.feed-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    flex-grow: 1;
+    overflow-y: auto;
+
+}
+
+/* These should be deleted later */
+.placeholder-post {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    padding: 1.25rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.placeholder-post p {
+    margin: 0 0 0.5rem 0;
+}
+
+.placeholder-post small {
+    color: var(--text-secondary);
+}
+
+/* Adding chatbox input styles */
+.chat-input-form {
+    display: flex;
+    overflow-y: auto;
+    gap: 10px;
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--surface-color);
+    flex-shrink: 0;
+}
+
+.chat-text-input {
+    flex-grow: 1;
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    border-radius: 20px;
+    outline: none;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+    resize: none;
+}
+
+.chat-text-input:focus {
+    border-color: var(--accent-color);
+}
+
+.chat-send-button {
+    padding: 10px 20px;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.chat-send-button:hover {
+    background-color: #4338ca;
+}
+
+/* Widget Canvas */
+.widget-viewport {
+    flex: 1; /* Adjust based on your current master layout */
+    height: 100vh; /* Keeps it contained to the screen height */
+    overflow: auto; 
+    position: relative;
+    background-color: #1a1a1a; /* Matches your dark theme */
+}
+
+.canvas-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    
+    /* Add these lines to lock it to the screen */
+    position: sticky;
+    top: 1rem;
+    right: 1rem;
+    z-index: 50; 
+    padding: 1rem;
+}
+
+/* the 1500x1500 sandbox area for widgets */
+.widget-canvas-area {
+    width: 1500px;
+    height: 1500px;
+    position: relative; 
+    
+    /* Optional: Creates a subtle dot grid for the canvas feel */
+    background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+.add-widget-btn {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.add-widget-btn:hover {
+    background-color: #4338ca;
+}
+
+/* Mock Widgets */
+.mock-widget {
+    position: absolute;
+    background-color: var(--surface-color);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--border-color);
+}
+
+.mock-widget h4 {
+    margin: 0 0 0.5rem 0;
+}
+
+.weather-widget {
+    top: 100px;
+    left: 50px;
+    width: 200px;
+}
+
+.sticky-widget {
+    top: 150px;
+    left: 300px;
+    background-color: #fef08a; 
+    border-color: #fde047;
+    color: #1f2937; /* Forces dark text so it doesn't vanish in dark mode */
+}
+
+.sticky-widget ul {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+/* The container handles all the sticky positioning and flex spacing */
+.widget-hud-container {
+    position: sticky;
+    top: 20px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end; /* Shoves everything to the right */
+    align-items: center; /* Vertically centers the text with the button */
+    gap: 15px; /* Creates an unbreakable space between the text and button */
+    padding-right: 20px; /* Snaps it away from the right edge */
+    z-index: 100;
+    pointer-events: none; /* Lets you click through the invisible empty space to pan the canvas */
+}
+
+/* The text only needs to define its color */
+.widget-hud-text {
+    color: var(--text-secondary);
+}
+
+/* The button defines its style and re-enables pointer events */
+.widget-hud-btn {
+    pointer-events: auto; /* Crucial: Re-enables clicking on the actual button */
+    padding: 8px 16px;
+    background-color: var(--accent-color);
+    color: orange;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}

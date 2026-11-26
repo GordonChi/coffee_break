@@ -40,6 +40,7 @@ export default function NavBar() {
                         <div className="dropdown">
                             <button className="dropdown-button">Account ▾</button>
                             <div className="dropdown-content">
+                                <Link to="/Dashboard">Dashboard</Link>
                                 <Link to="/profile">Profile</Link>
                                 <Link to="/settings">Settings</Link>
                                 <Link to="/privacy">Privacy</Link>

@@ -12,16 +12,17 @@ const User = require('../models/User');
 // ==========================================
 router.post('/check-username', async (req, res) => {
     try {
+        console.log("1. Payload route reached:", req.body);
         // Need to have a username in the request body to check
         const { username } = req.body;
 
         // If the username is empty or too short, we can immediately return that it's not available
-        if (!username || username.trim() < 3) {
+        if (!username || username.trim().length < 3) {
             return res.status(400).json({ available: false, message: 'Must be at least 3 characters.' });
         }
-
+        console.log("2. Checking database for:", username);
         const userExists = await User.findOne({ username: username.toLowerCase().trim() });
-
+        console.log("3. Database query finished!");
         // If the user exists, return false again because its unavailable
         if (userExists) {
             return res.status(200).json({ available: false, message: 'Username is already taken.' });
@@ -84,7 +85,6 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-
         // 1. Does this user exist in the database?
         const user = await User.findOne({ email });
         if (!user) {
@@ -100,7 +100,7 @@ router.post('/login', async (req, res) => {
         // 3. Generate JWT keycard
         const token = jwt.sign(
             { userId: user._id },       // Payload: user ID
-            process.env.JSW_SECRET,     // Secret key from .env
+            process.env.JWT_SECRET,     // Secret key from .env
             { expiresIn: '2h' }         // Token expiration time
         );
 
